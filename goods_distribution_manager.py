@@ -125,7 +125,7 @@ distr_cb2.pack()
 
 def distr_all(file):
     prih = pd.read_excel(file)
-    prih.sort_values(by='Товар')
+    prih.sort_values(by='Товар', inplace=True)
     shops = pd.read_excel('C:\анаконда\shop_list.xlsx', names=['КодСклада'],dtype='int')
     shop_lst = shops.КодСклада.tolist()
     # словарь тов - количество и список товов
@@ -168,21 +168,21 @@ def distr_all(file):
     
     prih['Период реализации'] = sklad_list
     global distr_cb1, distr_cb2 
-    if distr_cb1 == True:
+    if var_cb1.get() == True:
        prih['Период реализации'] = prih['Период реализации'].apply(lambda x: 7171 if x == 0 else x)
     
-    if distr_cb2 == True:
+    if var_cb2.get() == True:
         prih = prih[prih['Период реализации'] > 0]
     
     name = 'C:/рушники/' + str(random.randrange(5000,10000)) + '.xlsx'
     prih.to_excel(name, sheet_name='Движение товара', index=False)     
         
     
-def distr_obr():
+def distr_obr(file):
     shops = pd.read_excel('C:\анаконда\shop_list.xlsx', dtype='int')
     
     # достаем Тпг+размер c количеством которые нужно считать из накладной 
-    prih = pd.read_excel(path, dtype='str')
+    prih = pd.read_excel(file, dtype='str')
     prih['tpg'] = prih['Товарная подгруппа'].str.cat(prih['Размер'], sep="_")
     prih['tpg'] = prih['tpg'].str.replace('.', ',')# меняем точки на запятые
     prih.sort_values(by=['tpg'], inplace=True)
@@ -237,18 +237,18 @@ def distr_obr():
     
     prih['Период реализации'] = np.array([item for sublist in lst for item in sublist])
     
-    if distr_cb1 == True:
+    if var_cb1.get() == True:
        prih['Период реализации'] = prih['Период реализации'].apply(lambda x: 7171 if x == 0 else x)
     
-    if distr_cb2 == True:
+    if var_cb2.get() == True:
         prih = prih[prih['Период реализации'] > 0]
     
     name = 'C:/рушники/' + str(random.randrange(5000,10000)) + '.xlsx'
     prih.to_excel(name, sheet_name='Движение товара', index=False) 
     
-def distr_bz():
+def distr_bz(file):
     # get stockdata, goods receipt, shops list, stock capability
-    prih = pd.read_excel(path)
+    prih = pd.read_excel(file)
     prih.sort_values(by=['Товар'], inplace=True)
     prih['Описание 3'] = prih['Описание 3'].str.lower()
     
@@ -275,10 +275,10 @@ def distr_bz():
     
     #letter: dataframe with columns:store number, filling rate, demand(positive num is overstock, negative num is demand)
     letter_dict = dict(zip(letters,[demand[['Наполняха', letter]] for letter in letters]))
-    if distr_cb1 == True:
+    if var_cb1.get() == True:
        prih['Период реализации'] = prih['Период реализации'].apply(lambda x: 7171 if x == 0 else x)
     
-    if distr_cb2 == True:
+    if var_cb2.get() == True:
         prih = prih[prih['Период реализации'] > 0]
     
     name = 'C:/рушники/' + str(random.randrange(5000,10000)) + '.xlsx'
@@ -311,10 +311,10 @@ def distr_bz():
 def distrfunc():
     path = 'C:/рушники/' + distr_t2.get(1.0, 'end-1c') + '.xlsx'
     
-    if var_distr == 0:
-        distr_obr()
-    elif var_distr == 1:
-        distr_bz()
+    if var_distr.get() == 0:
+        distr_obr(path)
+    elif var_distr.get() == 1:
+        distr_bz(path)
     else:
         distr_all(path)
 
